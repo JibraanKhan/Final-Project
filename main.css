@@ -1,0 +1,17 @@
+.dotted{
+  border: none;
+  border-top: 1px dotted;
+  height: 1px;
+}
+
+.dashed{
+  border:none;
+  border-top: 1px dashed;
+  height: 1px;
+}
+
+.solid{
+  border:none;
+  border-top: 1px solid;
+  height: 1px;
+}
