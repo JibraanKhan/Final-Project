@@ -28,14 +28,14 @@ body{
   pointer-events: none;
 }
 
-.Line{
-  pointer-events: all;
-}
-
 text{
   stroke: white;
   fill: white;
-  font-family: Gugi;
+  font-family: Roboto Condensed;
+}
+
+.makeWhite{
+  stroke: white;
 }
 
 h1{

@@ -143,11 +143,6 @@ Promise.all([data, other_data]).then(function(values){
   var yAxis_P = d3.axisLeft(yScale_P)
                   .ticks(data_sorted.Production.length);
   var max;
-  var type_of_line = {
-    ['North America']: '3, 3',
-    ['Europe']: '20, 15',
-    ['Japan']: '0, 0'
-  }
   var drawLine = d3.line()
                    .x(function(d, i){ return xScale(Object.keys(data_sorted.SalesPerCapita[region])[i])})
                    .y(function(d, i){ return yScale_S(d) + graph_margins.top - graph_margins.bottom})
@@ -194,6 +189,11 @@ Promise.all([data, other_data]).then(function(values){
     ['Europe']: '#e89933',
     ['Japan']: '#42f445'
   }
+  var extra_color = {
+    ['North America']: '#af11a5',
+    ['Europe']: '#a86815',
+    ['Japan']: '#19961b'
+  }
   var line_objs = [];
   var index = 0;
   for (var region in data_sorted.SalesPerCapita){
@@ -207,13 +207,15 @@ Promise.all([data, other_data]).then(function(values){
                             .attr('class', 'Line')
                             .attr('stroke', colors[region])
                             .attr('stroke-width', 5)
-                            .attr('stroke-dasharray', (type_of_line[region]))
                             .attr('class', region)
                             .on('mouseover', function(){
                               var path = d3.select(this);
                               var mouse = d3.mouse(this)
                               var mouse_x = mouse[0];
                               var mouse_y = mouse[1];
+
+                              path.transition()
+                                  .attr('stroke', extra_color[path.attr('class')]);
                               var txt = graph.append('text')
                                              .attr('class', 'wasted')
                                              .attr('x', mouse_x)
@@ -227,6 +229,9 @@ Promise.all([data, other_data]).then(function(values){
                               line_objs.push(txt);
                             })
                             .on('mouseout', function(){
+                              var path = d3.select(this);
+                              path.transition()
+                                  .attr('stroke', colors[path.attr('class')]);
                               line_objs.forEach(function(obj){
                                 obj.transition()
                                    .attr('opacity', 0)
@@ -300,6 +305,7 @@ Promise.all([data, other_data]).then(function(values){
                                                               .attr('stroke', 'black')
                                                               .attr('stroke-width', 5)
                                                               .attr('stroke-dasharray', ('5, 5'))
+                                                              .attr('class', 'makeWhite')
 
                                     var line2 = recession_holder.append('line')
                                                                .attr('x1', xScale(d[1][0]) + (xScale(d[1][1]) - xScale(d[1][0])))
@@ -309,6 +315,8 @@ Promise.all([data, other_data]).then(function(values){
                                                                .attr('stroke', 'black')
                                                                .attr('stroke-width', 5)
                                                                .attr('stroke-dasharray', ('5, 5'))
+                                                               .attr('class', 'makeWhite');
+
                                     var two_lines = [line, line2]
 
                                     two_lines.forEach(function(line){
@@ -370,7 +378,7 @@ Promise.all([data, other_data]).then(function(values){
                       .attr('transform', 'translate(' + (svg_margins.left * 0.75) +  ',' + ((graph_height * 0.5) + graph_margins.top) +') rotate(-90)')
                       .attr('text-anchor', 'middle')
                       .attr('font-size', 25)
-                      .text('Sales in Millions Per Capita')
+                      .text('Sales Per Capita')
     var legend = svg.append('g')
                     .attr('transform', 'translate(' + (graph_margins.left + svg_margins.left + graph_width + graph_margins.right * 0.35) + ',' + (graph_margins.top) + ')')
 
@@ -401,7 +409,7 @@ Promise.all([data, other_data]).then(function(values){
                               .attr('translate', 'transform(' + x + ',' + y + ')')
 
       var dt = [
-        ['line', colors[region], type_of_line[region]],
+        ['line', colors[region]],
         ['text'],
       ]
 
@@ -410,7 +418,6 @@ Promise.all([data, other_data]).then(function(values){
                  .attr('x2', legend_width * 0.45)
                  .attr('y1', y)
                  .attr('y2', y)
-                 .attr('stroke-dasharray', dt[0][2])
                  .attr('stroke', dt[0][1])
                  .attr('stroke-width', 5)
 
@@ -557,7 +564,7 @@ var sort_data = function(sales_data, us, eu, jpn, populations, years){
           sales_data.forEach(function(game, index){
             if (game.Year == year){
               var prop = property_converter[region];
-              capita_total += (game[prop] * 1000000)/population;
+              capita_total += ((game[prop] * 1000000)/population);
             }
           })
           salespercapita[region][year] = capita_total || 0;
