@@ -15,3 +15,16 @@
   border-top: 1px solid;
   height: 1px;
 }
+
+.wasted{
+  pointer-events: none;
+}
+
+.Line{
+  pointer-events: all;
+}
+
+h1{
+  font-size: 36px;
+  text-align: center;
+}
