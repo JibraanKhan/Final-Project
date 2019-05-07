@@ -201,7 +201,6 @@ Promise.all([data, other_data]).then(function(values){
   for (var region in data_sorted.SalesPerCapita){
     if (data_sorted.SalesPerCapita.hasOwnProperty(region)){
       curr_region = region;
-      console.log("Current Region:", curr_region);
       var g = graph.append('g')
       var line_graph = g.append('path')
                             .datum(Object.values(data_sorted.SalesPerCapita[region]))
