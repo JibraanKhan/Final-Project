@@ -16,6 +16,14 @@
   height: 1px;
 }
 
+body{
+  background-color: #30353f;
+}
+
+.xAxis, .Axis{
+  color: white;
+}
+
 .wasted{
   pointer-events: none;
 }
@@ -24,7 +32,14 @@
   pointer-events: all;
 }
 
+text{
+  stroke: white;
+  fill: white;
+  font-family: Gugi;
+}
+
 h1{
   font-size: 36px;
   text-align: center;
+  color: #ffffff;
 }

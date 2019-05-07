@@ -129,11 +129,9 @@ Promise.all([data, other_data]).then(function(values){
   var xScale = d3.scaleQuantile()
                  .domain(domain_constructor())
                  .range(range_constructor())
- // var xAxis = d3.axisTop(xAxisScale)
- //               .ticks(d3.max(d3.max(student_buckets, function(d, i){ return d.map(function(d,i){ return d.max_day; }); }))/stretch)
+
   var xAxis = d3.axisTop(xScale)
                 .ticks(2)
-  // console.log("Range:", [Math.min(Math.min(d3.min(Object.values(data_sorted.SalesPerCapita.Japan)), d3.min(Object.values(data_sorted.SalesPerCapita.Europe))), d3.min(Object.values(data_sorted.SalesPerCapita['North America']))), Math.max(Math.max(d3.max(Object.values(data_sorted.SalesPerCapita.Japan)), d3.max(Object.values(data_sorted.SalesPerCapita.Europe))), d3.max(Object.values(data_sorted.SalesPerCapita['North America'])))])
   var yScale_S = d3.scaleLinear()
                    .domain([Math.min(Math.min(d3.min(Object.values(data_sorted.SalesPerCapita.Japan)), d3.min(Object.values(data_sorted.SalesPerCapita.Europe))), d3.min(Object.values(data_sorted.SalesPerCapita['North America']))), Math.max(Math.max(d3.max(Object.values(data_sorted.SalesPerCapita.Japan)), d3.max(Object.values(data_sorted.SalesPerCapita.Europe))), d3.max(Object.values(data_sorted.SalesPerCapita['North America'])))])
                    .range([graph_height, 0])
@@ -245,10 +243,12 @@ Promise.all([data, other_data]).then(function(values){
      .attr('transform', 'translate(' + (0) +',' + (graph_height + graph_margins.top + graph_margins.bottom) + ')')
      .call(xAxis);
   svg.append('g')
-     .attr('transform', 'translate(' + svg_margins.left + ',' + (graph_margins.top - graph_margins.bottom) + ')')
+     .attr('class', 'Axis')
+     .attr('transform', 'translate(' + svg_margins.left + ',' + (graph_margins.top - graph_margins.bottom + svg_margins.top) + ')')
      .call(yAxis_S);
   svg.append('g')
-     .attr('transform', 'translate(' + (svg_margins.left + graph_width + graph_margins.left + graph_margins.right * 0.1) + ',' + (graph_margins.top - graph_margins.bottom) + ')')
+     .attr('class', 'Axis')
+     .attr('transform', 'translate(' + (svg_margins.left + graph_width + graph_margins.left + graph_margins.right * 0.1) + ',' + (graph_margins.top - graph_margins.bottom + svg_margins.top) + ')')
      .call(yAxis_P);
   var recession_years = function(){
     var recs = []
@@ -262,14 +262,14 @@ Promise.all([data, other_data]).then(function(values){
     return recs;
   }();
   var recession_bars = svg.append('g')
-
+  var padding_topping = svg_margins.top * 2;
   var recessions = recession_bars.selectAll('g')
                       .data(Object.values(data_sorted.Recessions))
                       .enter()
                       .append('g')
                       .each(function(d_obj, i){
                         var current_g = d3.select(this);
-                        var padding = 0.4;
+                        var padding = 0.6;
                         var recession_holder = current_g.append('g')
                                             .attr('transform', 'translate(' + -svg_margins.left + ',' + 0 + ')')
                         var text = current_g.append('text')
@@ -317,7 +317,7 @@ Promise.all([data, other_data]).then(function(values){
                                           .on('end', function(){
                                              var text = svg.append('text')
                                                 .attr('x', xScale(d[1][0]) + ((xScale(d[1][1]) - xScale(d[1][0])) * 0.5))
-                                                .attr('y', svg_margins.top + graph_screen.height + svg_margins.bottom * 7)
+                                                .attr('y', svg_margins.top + graph_screen.height + svg_margins.bottom * 9)
                                                 .attr('opacity', 0)
                                                 .attr('text-anchor', 'middle')
                                                 .text(d[0])
@@ -352,16 +352,16 @@ Promise.all([data, other_data]).then(function(values){
                                  })
                       })
                       .attr('transform', function(d, i){
-                        return 'translate(' + svg_margins.left + ',' + ((i + 1) * ((graph_margins.top * 0.5)/(Object.values(data_sorted.Recessions).length))) + ')'
+                        return 'translate(' + svg_margins.left + ',' + ((i + 1) * (((graph_margins.top * 0.25)/(Object.values(data_sorted.Recessions).length)) + padding_topping)) + ')'
                       })
     var xLabel = graph.append('text')
                     .attr('x', graph_width/2)
-                    .attr('y', graph_height + graph_margins.top + graph_margins.bottom + svg_margins.top + svg_margins.bottom * 3)
+                    .attr('y', graph_height + graph_margins.top + graph_margins.bottom + svg_margins.top + svg_margins.bottom * 5)
                     .attr('font-size', 25)
                     .text('Years')
 
     var pLabel = graph.append('text')
-                      .attr('transform', 'translate(' + (svg_margins.left + graph_width + graph_margins.left + graph_margins.right * 0.17) + ',' + ((graph_height * 0.5) + graph_margins.top) +') rotate(-90)')
+                      .attr('transform', 'translate(' + (svg_margins.left + graph_width + graph_margins.left + graph_margins.right * 0.2) + ',' + ((graph_height * 0.5) + graph_margins.top) +') rotate(-90)')
                       .attr('text-anchor', 'middle')
                       .attr('font-size', 25)
                       .text('Production')
